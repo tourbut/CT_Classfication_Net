@@ -11,7 +11,7 @@ import torch
 
 def train_epoch(device,train_dataloader,valid_dataloader,test_dataloader
                 ,model,criterion_clf,optimizer
-                ,config, epoch,age_onoff=True,num_classes=3):
+                ,config, epoch,num_classes=2):
     
     log_path, store_name = utils.create_storename(config)
     train_logger = utils.Logger(os.path.join(log_path, store_name+'_train.log'),['epoch', 'loss','acc', 'lr'])
@@ -22,12 +22,10 @@ def train_epoch(device,train_dataloader,valid_dataloader,test_dataloader
     scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, 'max',factor=0.7, patience=5)
     for i in range(epoch):
         
-        #adjust_learning_rate(optimizer,i,learning_rate,lr_steps=lr_steps)
-        
         loss, acc = train(device,i,train_dataloader,model,criterion_clf
-                        ,optimizer,train_logger,train_batch_logger,age_onoff=age_onoff)
+                        ,optimizer,train_logger,train_batch_logger)
         
-        val_loss,val_acc = validation(device,i,valid_dataloader,model,criterion_clf,valid_logger,age_onoff=age_onoff,num_classes=num_classes)
+        val_loss,val_acc = validation(device,i,valid_dataloader,model,criterion_clf,valid_logger,num_classes=num_classes)
 
         
         #성능이 향상이 없을 때 learning rate를 감소시킨다
@@ -57,12 +55,14 @@ def train_epoch(device,train_dataloader,valid_dataloader,test_dataloader
         #모델 세이브
         utils.save_checkpoint(state, is_best, config)
     
-    test_logger = utils.Logger(os.path.join(log_path, store_name+'_test.log'),['best_yn','loss', 'acc','ConfusionMatrix','auroc','fpr','tpr','thresholds'])
-    #last model test
-    loss, accu, CFM, auroc = test(device,test_dataloader,model,criterion_clf, test_logger, age_onoff = age_onoff,best_yn=False)
+    
+    if test_dataloader != None :
+        test_logger = utils.Logger(os.path.join(log_path, store_name+'_test.log'),['best_yn','loss', 'acc','ConfusionMatrix','auroc','fpr','tpr','thresholds'])
+        #last model test
+        loss, accu, CFM, auroc,_fpr,_tpr,_thresholds = test(device,test_dataloader,model,criterion_clf, test_logger,best_yn=False)
 
-    #best model test
-    checkpoint = torch.load(os.path.join(log_path, store_name+'_best.pth'))
-    if isinstance(model, nn.DataParallel) ==False: ## 다중 GPU를 사용한다면
-        model.load_state_dict(checkpoint['state_dict'])
-        loss, accu, CFM, auroc = test(device,test_dataloader,model,criterion_clf, test_logger, age_onoff = age_onoff,best_yn=True)    
+        #best model test
+        checkpoint = torch.load(os.path.join(log_path, store_name+'_best.pth'))
+        if isinstance(model, nn.DataParallel) ==False: ## 다중 GPU를 사용한다면
+            model.load_state_dict(checkpoint['state_dict'])
+            loss, accu, CFM, auroc,_fpr,_tpr,_thresholds = test(device,test_dataloader,model,criterion_clf, test_logger,best_yn=True)    

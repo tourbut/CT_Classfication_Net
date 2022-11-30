@@ -8,7 +8,7 @@ from utils import *
 from torchmetrics.functional.classification import multiclass_auroc
 from torchmetrics.classification import MulticlassConfusionMatrix,MulticlassROC
 
-def validation(device, epoch, data_loader, model, criterion, logger,age_onoff = True,num_classes=3):
+def validation(device, epoch, data_loader, model, criterion, logger,num_classes=3):
     print('valid at epoch {}'.format(epoch))
 
     
@@ -20,15 +20,11 @@ def validation(device, epoch, data_loader, model, criterion, logger,age_onoff = 
     
     with torch.no_grad():
         model.eval()
-        for i, (inputs, input_age, targets) in enumerate(data_loader):
+        for i, (inputs, targets) in enumerate(data_loader):
 
             inputs = Variable(inputs).to(device)
             targets = Variable(targets).to(device)
-            if age_onoff == True:
-                input_age = Variable(input_age).to(device)
-                outputs = model(inputs,input_age)
-            else:
-                outputs = model(inputs)
+            outputs = model(inputs)
                 
             loss = criterion(outputs, targets)
             acc = accuracy(outputs.data, targets.data,device=device)
@@ -65,7 +61,7 @@ def validation(device, epoch, data_loader, model, criterion, logger,age_onoff = 
     _fpr = []
     _tpr = []
     _thresholds = []
-    for i in range(3):
+    for i in range(num_classes):
         _fpr.append(fpr[i].tolist())
         _tpr.append(tpr[i].tolist())
         _thresholds.append(thresholds[i].tolist())

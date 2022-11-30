@@ -5,22 +5,18 @@ from metrics import accuracy
 
 from utils import *
 
-def train(device, epoch, data_loader, model, criterion, optimizer, epoch_logger, batch_logger,age_onoff = True):
+def train(device, epoch, data_loader, model, criterion, optimizer, epoch_logger, batch_logger):
     print('train at epoch {}'.format(epoch))
 
     model.train(True)
     losses = AverageMeter(name='losses')
     accuracies = AverageMeter(name='accuracies')
 
-    for i, (inputs,input_age, targets) in enumerate(data_loader):
+    for i, (inputs, targets) in enumerate(data_loader):
 
         inputs = Variable(inputs).to(device)
         targets = Variable(targets).to(device)
-        if age_onoff == True:
-            input_age = Variable(input_age).to(device)
-            outputs = model(inputs,input_age)
-        else:
-            outputs = model(inputs)
+        outputs = model(inputs)
 
         loss = criterion(outputs, targets)
         acc = accuracy(outputs.data, targets.data,device=device)
