@@ -137,3 +137,7 @@ def save_checkpoint(state, is_best, config):
     torch.save(state, '%s/%s_checkpoint.pth' % (log_path, store_name))
     if is_best:
         shutil.copyfile('%s/%s_checkpoint.pth' % (log_path, store_name),'%s/%s_best.pth' % (log_path, store_name))
+        
+def copy_config(config):
+    log_path, _ = create_storename(config)
+    shutil.copyfile('config.json','%s/config.json' % (log_path))
