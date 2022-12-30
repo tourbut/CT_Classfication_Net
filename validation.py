@@ -4,7 +4,7 @@ import time
 from metrics import accuracy
 
 from utils import *
-
+from tqdm.auto import tqdm
 from torchmetrics.functional.classification import multiclass_auroc
 from torchmetrics.classification import MulticlassConfusionMatrix,MulticlassROC
 
@@ -20,7 +20,7 @@ def validation(device, epoch, data_loader, model, criterion, logger,num_classes=
     
     with torch.no_grad():
         model.eval()
-        for i, (inputs, targets) in enumerate(data_loader):
+        for i, (inputs, targets) in tqdm(enumerate(data_loader)):
 
             inputs = Variable(inputs).to(device)
             targets = Variable(targets).to(device)

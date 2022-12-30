@@ -2,7 +2,7 @@ from torch.autograd import Variable
 import time
 
 from metrics import accuracy
-
+from tqdm.auto import tqdm
 from utils import *
 
 def train(device, epoch, data_loader, model, criterion, optimizer, epoch_logger, batch_logger):
@@ -12,7 +12,7 @@ def train(device, epoch, data_loader, model, criterion, optimizer, epoch_logger,
     losses = AverageMeter(name='losses')
     accuracies = AverageMeter(name='accuracies')
 
-    for i, (inputs, targets) in enumerate(data_loader):
+    for i, (inputs, targets) in tqdm(enumerate(data_loader)):
 
         inputs = Variable(inputs).to(device)
         targets = Variable(targets).to(device)
