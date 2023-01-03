@@ -26,8 +26,8 @@ def read_csv(filename):
     labels = [0 if a[1]=='CN' else 1 for a in your_list[1:]]
     return filenames, labels
 
-def load_config():
-    config = read_json('./config.json')
+def load_config(path='./config.json'):
+    config = read_json(path)
     return config
 
 def stack_plot(stack,rows=6,cols=6,start_with=10,show_every=5,subtitle='title'):

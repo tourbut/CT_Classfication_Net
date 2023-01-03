@@ -12,7 +12,6 @@ from torchmetrics.classification import MulticlassConfusionMatrix,MulticlassROC
 def test(device, data_loader, model, criterion, logger,num_classes=2, best_yn=''):
     print('test')
 
-    
     losses = utils.AverageMeter(name='losses')
     accuracies = utils.AverageMeter(name='accuracies')
 
@@ -20,7 +19,7 @@ def test(device, data_loader, model, criterion, logger,num_classes=2, best_yn=''
     labels = []
     with torch.no_grad():
         model.eval()
-        for i, (inputs, targets) in tqdm(enumerate(data_loader)):
+        for inputs, targets in tqdm(iter(data_loader)):
 
             inputs = Variable(inputs).to(device)
             targets = Variable(targets).to(device)

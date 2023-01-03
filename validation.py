@@ -20,8 +20,9 @@ def validation(device, epoch, data_loader, model, criterion, logger,num_classes=
     
     with torch.no_grad():
         model.eval()
-        for i, (inputs, targets) in tqdm(enumerate(data_loader)):
-
+        i=0
+        for inputs, targets in tqdm(iter(data_loader)):
+            i+=1
             inputs = Variable(inputs).to(device)
             targets = Variable(targets).to(device)
             outputs = model(inputs)
