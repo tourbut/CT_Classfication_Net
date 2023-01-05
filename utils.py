@@ -30,7 +30,7 @@ def load_config(path='./config.json'):
     config = read_json(path)
     return config
 
-def stack_plot(stack,rows=6,cols=6,start_with=10,show_every=5,subtitle='title'):
+def stack_plot(stack,rows=6,cols=6,start_with=10,show_every=5,subtitle='title',save_yn=False,result_path=''):
     fig,ax = plt.subplots(rows,cols,figsize=[12,12])
     plt.suptitle(subtitle)
     for i in range(rows*cols):
@@ -38,9 +38,13 @@ def stack_plot(stack,rows=6,cols=6,start_with=10,show_every=5,subtitle='title'):
         ax[int(i / rows),int(i % rows)].set_title('slice %d'%ind)
         ax[int(i / rows),int(i % rows)].imshow(stack[:,:,ind],cmap='gray')
         ax[int(i / rows),int(i % rows)].axis('off')
+        
+    if save_yn==True:
+        plt.savefig(os.path.join(result_path,subtitle+'.png'))
+        
     plt.show()
 
-def stack_overlay_plot(img,overlay_img,alpha=0.5,rows=5,cols=5,start_with=0,show_every=5,subtitle='title'):
+def stack_overlay_plot(img,overlay_img,alpha=0.5,rows=5,cols=5,start_with=0,show_every=5,subtitle='title',save_yn=False,result_path=''):
     fig,ax = plt.subplots(rows,cols,figsize=[12,12])
     plt.suptitle(subtitle)
     for i in range(rows*cols):
@@ -49,6 +53,10 @@ def stack_overlay_plot(img,overlay_img,alpha=0.5,rows=5,cols=5,start_with=0,show
         ax[int(i / rows),int(i % rows)].imshow(img[:,:,ind],cmap='gray')
         ax[int(i / rows),int(i % rows)].imshow(overlay_img[:,:,ind],cmap='jet',alpha=alpha)
         ax[int(i / rows),int(i % rows)].axis('off')
+        
+    if save_yn==True:
+        plt.savefig(os.path.join(result_path,subtitle+'.png'))
+        
     plt.show()
 
 def image_plot(img):
